@@ -28,9 +28,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        viewModel.getData()
+        getData()
+        viewModel.getGenresData()
         setupDataObserver()
         setupRecyclerView()
+    }
+
+    private fun getData() {
+        viewModel.getData()
     }
 
     private var isLoadingSuccess = false
@@ -46,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     if (isLoadingSuccess && linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == movieAdapter.currentList.size - 5) {
                         isLoadingSuccess = false
                         //bottom of list!
-                        viewModel.getData()
+                        getData()
                         progressBar.isVisible = true
                     }
                 }
