@@ -103,36 +103,49 @@ class MainViewModel : ViewModel() {
         )
     }
 
-    val hashMap: HashMap<String, ArrayList<Movie>?> = HashMap()
+//    val hashMap: HashMap<String, ArrayList<Movie>?> = HashMap()
 
     fun getGenresData1() {
         compositeDisposable.add(
             ApiService.api.getMovieGenres()
                 .flatMap {
                     Observable.fromIterable(it.genres)
-                        .onErrorResumeNext(Observable.just(null))
-                }.flatMap { movieResponse ->
-                    ApiService.api.getListMovie(movieResponse.id ?: 0)
-                        .onErrorResumeNext(Observable.just(null))
-                        .map {
-                            hashMap.put(movieResponse.name ?: "", it.results)
-                            GenreMovieList(movieResponse, it.results)
+                        .doOnError {
+                            Log.e(TAG, "getGenresData1: fromIterable error ${it.printStackTrace()}")
                         }
                 }
+                .doOnError {
+                    Log.e(TAG, "getGenresData1: $it")
+                }.flatMap { movieResponse ->
+                    ApiService.api.getListMovieByGenreID(movieResponse.id ?: 0)
+                        .map {
+//                            hashMap.put(movieResponse.name ?: "", it.results)
+                            GenreMovieList(movieResponse, it.results)
+                        }
+                        .doOnError {
+                            Log.e(TAG, "getGenresData1: getListMovie error ${it.printStackTrace()}")
+                        }
+
+                }
+
                 .collectInto(ArrayList()) { listMovieByGenre: ArrayList<GenreMovieList>, items ->
                     if (items != null) {
                         listMovieByGenre.add(items)
                     }
                 }
                 .doOnSuccess {
-                    //
+                    Log.d(TAG, "getGenresData1: result $it")
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError {
-
+                    Log.e(TAG, "getGenresData1: error ${it.printStackTrace()}")
                 }
-                .subscribe()
+                .subscribe({
+
+                },{
+                    Log.e(TAG, "getGenresData1: subcribe error ${it.printStackTrace()}")
+                })
         )
     }
 

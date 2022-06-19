@@ -44,6 +44,13 @@ interface ApiService {
         @Query("language") language: String = DEFAULT_LANGUAGE,
     ): Observable<MovieList?>
 
+
+    @GET("discover/movie")
+    fun getListMovieByGenreID(
+        @Query("with_genres") genreId: Int,
+        @Query("api_key") apiKey: String = TOKEN_API,
+        @Query("language") language: String = DEFAULT_LANGUAGE,
+    ): Observable<MovieList?>
     companion object {
 
         val logging = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {

@@ -29,7 +29,8 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         getData()
-        viewModel.getGenresData()
+//        viewModel.getGenresData()
+        viewModel.getGenresData1()
         setupDataObserver()
         setupRecyclerView()
     }
